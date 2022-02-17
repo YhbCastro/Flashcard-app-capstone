@@ -1,6 +1,4 @@
 import React from 'react';
-
-
 function DeckForm({ formData, changeHandler }) {
   console.log(formData)
   return (

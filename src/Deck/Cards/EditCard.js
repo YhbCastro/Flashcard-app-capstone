@@ -1,49 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useHistory } from 'react-router-dom';
-import DeckForm from './DeckForm';
-import { readDeck, updateDeck } from '../utils/api/index';
+import CardForm from './CardForm';
+import { readDeck, readCard, updateCard } from '../../utils/api/index';
 
-function EditDeck() {
-  const initialFormState = {
-    name: '',
-    description: '',
-  };
-  const { deckId } = useParams();
-  const [deck, setDeck] = useState(initialFormState);
+function EditCard() {
+  const { deckId, cardId } = useParams();
+  const [deck, setDeck] = useState({});
+  const [card, setCard] = useState({});
   useEffect(() => {
+    setDeck({});
     async function loadData() {
       try {
         const deckData = await readDeck(deckId);
         setDeck(deckData);
+
+        const cardData = await readCard(cardId);
+        setCard(cardData);
       } catch (error) {
         if (error.name === 'AbortError') {
-          // Ignore `AbortError`
           console.log('Aborted');
         } else throw error;
       }
     }
     loadData();
-  }, [deckId]);
+  }, [deckId, cardId]);
 
-  const changeHandler = ({ target }) => {
+  const handleChange = ({ target }) => {
     const { value, name } = target;
-    setDeck({
-      ...deck,
+    setCard({
+      ...card,
       [name]: value,
     });
   };
-
   const history = useHistory();
-  const submitHandler = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    //console.log("Submitted:", deck);
+    console.log('Submitted:', card);
     async function updateData() {
       try {
-        await updateDeck(deck);
+        await updateCard(card);
+
         history.push(`/decks/${deckId}`);
       } catch (error) {
         if (error.name === 'AbortError') {
-          // Ignore `AbortError`
           console.log('Aborted');
         } else throw error;
       }
@@ -56,6 +55,7 @@ function EditDeck() {
         <ol className="breadcrumb">
           <li className="breadcrumb-item" key="0">
             <Link to="/">
+              {' '}
               <span className="oi oi-home" /> Home
             </Link>
           </li>
@@ -63,25 +63,25 @@ function EditDeck() {
             <Link to={`/decks/${deckId}`}>{deck.name}</Link>
           </li>
           <li className="breadcrumb-item active" aria-current="page" key="2">
-            Edit Deck
+            Edit Card {cardId}
           </li>
         </ol>
       </nav>
       <br />
 
-      <h2>Edit Deck</h2>
+      <h2>Edit Card</h2>
 
-      <form onSubmit={submitHandler}>
-        <DeckForm formData={deck} changeHandler={changeHandler} />
+      <form onSubmit={handleSubmit}>
+        <CardForm formData={card} handleChange={handleChange} />
         <Link to={`/decks/${deckId}`} className="btn btn-secondary">
           Cancel
         </Link>{' '}
         &nbsp;
-        <button type="submit" value="submit" className="btn btn-primary">
-          Submit
+        <button type="submit" className="btn btn-primary">
+          Save
         </button>
       </form>
     </div>
   );
 }
-export default EditDeck;
+export default EditCard;

@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { createDeck } from '../utils/api';
 import DeckForm from './DeckForm';
-
-
 function CreateDeck() {
   const initialFormState = {
     name: '',

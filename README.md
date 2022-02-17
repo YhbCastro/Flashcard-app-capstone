@@ -1,1 +1,2 @@
-# Flashcard-app-capstone
+# Flashcards-Project
+A flashcard application
